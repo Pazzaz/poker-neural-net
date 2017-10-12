@@ -14,8 +14,8 @@ def poker_simulator():
 
     player_1_hole_cards = cards[0:2]
     player_2_hole_cards = cards[2:4]
-    player_1_hand_strength = 8
-    player_2_hand_strength = 8
+    player_1_hand_strength = [0,0]
+    player_2_hand_strength = [0,0]
     board = cards[4:10]
     #print(board)
     player_1_hand = player_1_hole_cards + board
@@ -33,21 +33,35 @@ def poker_simulator():
             flush_suit = i
     
     flush_cards = [x[0] for x in player_1_hand if x[1] == flush_suit]
-    if flush_cards is not None:
+    if flush_cards != []:
         flush_cards.sort()
         flush_cards.reverse()
         straight_flush_counter = 0
-        for a, b in zip(flush_cards[:-1], flush_cards[1:]):
+        for a, b in zip(flush_cards[:-1], flush_cards[1:]): #<- Hur i hela friden funkar detta??
             if a == b+1:
                 straight_flush_counter += 1
                 if straight_flush_counter == 4:
-                    player_1_hand_strength = 0
+                    if flush_cards[0] == flush_cards[1]+1 and flush_cards[1] == flush_cards [2]+1:
+                        straight_flush_strength = flush_cards[0]
+                    elif flush_cards[1] == flush_cards [2]+1 and flush_cards[2] == flush_cards[3]+1:
+                        straight_flush_strength = flush_cards[1]
+                    else:
+                        straight_flush_strength = flush_cards[2]
+                    player_1_hand_strength = [8, straight_flush_strength]
+                    print("Straight flush")
                     print(sorted(player_1_hand))
+                    print(player_1_hand_strength)
                     break
             else:
                 straight_flush_counter = 0
-        if player_1_hand_strength > 3:
-            player_1_hand_strength = 3
+        if int(player_1_hand_strength[0]) < 5:
+            player_1_hand_strength[0] = 5
+            # while len(flush_cards) > 5:
+            #     flush_cards.pop()   
+            player_1_hand_strength[1] = sum(int(i) for i in flush_cards[0:6])
+            print("Flush")
+            print("Player 1 hand strength"+ str(player_1_hand_strength))
+            print("Flush cards"+ str(flush_cards))
 
         # if i[1] == 0:
         #     count_spades += 1
