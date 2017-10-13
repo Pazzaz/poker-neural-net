@@ -55,6 +55,23 @@ def poker_simulator():
                     break #Break eftersom en straight flush upptäckts och vi inte behöver leta mer. 
             else:
                 straight_flush_counter = 0
+        # Kolla efter quads
+        if has_quads(player_1_hand):
+            player_1_hand_strength[0] = 7
+            pairs = count_pairs(player_1_hand)
+            for value, count in pairs:
+                if count == 4:
+                    quads_value = value
+                    break
+            
+            kicker = -1
+            for card in player_1_hand:
+                value = card[0]
+                if value > highest_card && value != quads_value:
+                    kicker = value
+            
+            player_1_hand_strength[1] = kicker
+
         if int(player_1_hand_strength[0]) < 5:
             player_1_hand_strength[0] = 5
             # while len(flush_cards) > 5:
@@ -63,7 +80,7 @@ def poker_simulator():
             # print("Flush")
             # print("Player 1 hand strength"+ str(player_1_hand_strength))
             # print("Flush cards"+ str(flush_cards))
-
+    
         # if i[1] == 0:
         #     count_spades += 1
         # elif i[1] == 1:
@@ -77,6 +94,14 @@ def poker_simulator():
     output = cards
     return output
     # return "player_1_cards: " + player_1_cards + "player_2_cards: " + player_2_cards
+
+def has_quads(hand):
+    values = [x[0] for x in hand]
+    pairs = count_pairs(values)
+    for value, count in pairs:
+        if count == 4:
+            return True
+    return False
 
 def count_pairs(card_list):
     card_pairs = {}
