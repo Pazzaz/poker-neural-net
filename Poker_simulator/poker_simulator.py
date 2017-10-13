@@ -78,5 +78,14 @@ def poker_simulator():
     return output
     # return "player_1_cards: " + player_1_cards + "player_2_cards: " + player_2_cards
 
+def count_pairs(card_list):
+    card_pairs = {}
+    for card in card_list:
+        value = card[0]
+        if value in card_pairs:
+            card_pairs[value] += 1
+        else:
+            card_pairs[value] = 1
+    return card_pairs
 for _ in range(1000000):
     poker_simulator()
