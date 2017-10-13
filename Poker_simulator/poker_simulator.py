@@ -20,10 +20,8 @@ def poker_simulator():
     #print(board)
     player_1_hand = player_1_hole_cards + board
     player_2_hand = player_2_hole_cards + board
-    # count_spades = 0
-    # count_hearts = 0
-    # count_diamonds = 0
-    # count_clubs = 0
+
+    # Kolla efter flush
     suits_count_array = [0,0,0,0]
     flush_suit = -1
     for i in player_1_hand:
@@ -36,6 +34,8 @@ def poker_simulator():
     if flush_cards != []:
         flush_cards.sort()
         flush_cards.reverse()
+
+        # Kolla om det finns någomn straight flush 
         straight_flush_counter = 0
         for a, b in zip(flush_cards[:-1], flush_cards[1:]):
             if a == b+1 or (a == 12 and b == 3):
@@ -67,7 +67,7 @@ def poker_simulator():
             kicker = -1
             for card in player_1_hand:
                 value = card[0]
-                if value > highest_card && value != quads_value:
+                if value > kicker and value != quads_value:
                     kicker = value
             
             player_1_hand_strength[1] = kicker
@@ -80,17 +80,6 @@ def poker_simulator():
             # print("Flush")
             # print("Player 1 hand strength"+ str(player_1_hand_strength))
             # print("Flush cards"+ str(flush_cards))
-    
-        # if i[1] == 0:
-        #     count_spades += 1
-        # elif i[1] == 1:
-        #     count_hearts += 1
-        # elif i[1] == 2:
-        #     count_diamonds += 1
-        # elif i[1] == 3:
-        #     count_clubs += 1
-        # if count_spades >= 5 or count_hearts >= 5 or count_diamonds >= 5 or count_clubs >= 5
-
     output = cards
     return output
     # return "player_1_cards: " + player_1_cards + "player_2_cards: " + player_2_cards
