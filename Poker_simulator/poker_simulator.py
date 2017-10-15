@@ -55,22 +55,56 @@ def poker_simulator():
                     break #Break eftersom en straight flush upptäckts och vi inte behöver leta mer. 
             else:
                 straight_flush_counter = 0
-        # Kolla efter quads
-        if has_quads(player_1_hand):
+        # Kolla efter saker som har med par att göra
+        pairs = count_pairs(player_1_hand)
+        largest_pair = 0
+        second_largest_pair = 0 # Behövs för att hitta Full House
+        largest_pair_value = -1
+        for value, count in pairs:
+            # Vi vill få fram de kort som vi har flest av men om det finns flera
+            # med samma antal dubletter vill vi ha det med högsta värdet.
+            if count > largest_pair or (count == largest_pair and value > largest_pair_value):
+                second_largest_pair = largest_pair
+                largest_pair = count
+                largest_pair_value = value
+
+        if largest_pair == 4:
+            # Quads
             player_1_hand_strength[0] = 7
-            pairs = count_pairs(player_1_hand)
-            for value, count in pairs:
-                if count == 4:
-                    quads_value = value
-                    break
             
             kicker = -1
             for card in player_1_hand:
                 value = card[0]
-                if value > kicker and value != quads_value:
+                if value > kicker and value != largest_pair_value:
                     kicker = value
             
             player_1_hand_strength[1] = kicker
+        elif largest_pair == 3:
+            # TODO Fixa player_1_hand_strength[1].
+            if second_largest_pair >= 2:
+                # Full House
+                player_1_hand_strength[0] = 6
+            else:
+                # Three of a kind
+                player_1_hand_strength[0] = 3
+                
+        elif largest_pair == 2
+            # TODO Fixa player_1_hand_strength[1].
+
+            # Kolla om det finns mer än ett par
+            second_pair_value = -1
+            for value, count in pairs:
+                if value != largest_pair_value and count == 2 and value > second_pair_value:
+                    second_pair_value = value
+
+            if second_pair_value == -1:
+                # pair
+                player_1_hand_strength[0] = 1
+            else:
+                # Two pairs
+                player_1_hand_strength[0] = 1
+
+
 
         if int(player_1_hand_strength[0]) < 5:
             player_1_hand_strength[0] = 5
