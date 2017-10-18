@@ -20,7 +20,6 @@ def poker_simulator():
     #print(board)
     player_1_hand = player_1_hole_cards + board
     player_2_hand = player_2_hole_cards + board
-
     # Kolla efter flush
     suits_count_array = [0,0,0,0]
     flush_suit = -1
@@ -35,7 +34,7 @@ def poker_simulator():
         flush_cards.sort()
         flush_cards.reverse()
 
-        # Kolla om det finns någomn straight flush 
+        # Kolla om det finns någon straight flush 
         straight_flush_counter = 0
         for a, b in zip(flush_cards[:-1], flush_cards[1:]):
             if a == b+1 or (a == 12 and b == 3):
@@ -55,65 +54,62 @@ def poker_simulator():
                     break #Break eftersom en straight flush upptäckts och vi inte behöver leta mer. 
             else:
                 straight_flush_counter = 0
-        # Kolla efter saker som har med par att göra
-        pairs = count_pairs(player_1_hand)
-        largest_pair = 0
-        second_largest_pair = 0 # Behövs för att hitta Full House
-        largest_pair_value = -1
-        for value, count in pairs.items():
-            # Vi vill få fram de kort som vi har flest av men om det finns flera
-            # med samma antal dubletter vill vi ha det med högsta värdet.
-            if count > largest_pair or (count == largest_pair and value > largest_pair_value):
-                second_largest_pair = largest_pair
-                largest_pair = count
-                largest_pair_value = value
-
-        if largest_pair == 4:
-            # Quads
-            player_1_hand_strength[0] = 7
-            
-            kicker = -1
-            for card in player_1_hand:
-                value = card[0]
-                if value > kicker and value != largest_pair_value:
-                    kicker = value
-            
-            player_1_hand_strength[1] = kicker
-        elif largest_pair == 3:
-            # TODO Fixa player_1_hand_strength[1].
-            if second_largest_pair >= 2:
-                # Full House
-                player_1_hand_strength[0] = 6
-            else:
-                # Three of a kind
-                player_1_hand_strength[0] = 3
-                
-        elif largest_pair == 2:
-            # TODO Fixa player_1_hand_strength[1].
-
-            # Kolla om det finns mer än ett par
-            second_pair_value = -1
-            for value, count in pairs.items():
-                if value != largest_pair_value and count == 2 and value > second_pair_value:
-                    second_pair_value = value
-
-            if second_pair_value == -1:
-                # pair
-                player_1_hand_strength[0] = 1
-            else:
-                # Two pairs
-                player_1_hand_strength[0] = 1
-
-
 
         if int(player_1_hand_strength[0]) < 5:
             player_1_hand_strength[0] = 5
-            # while len(flush_cards) > 5:
-            #     flush_cards.pop()   
-            # # player_1_hand_strength[1] = sum(int(i) for i in flush_cards[0:6])
-            # print("Flush")
-            # print("Player 1 hand strength"+ str(player_1_hand_strength))
-            # print("Flush cards"+ str(flush_cards))
+            player_1_hand_strength[1] = flush_cards[0]
+            print(player_1_hand)
+            print(player_1_hand_strength)
+
+    # Kolla efter saker som har med par att göra
+    pairs = count_pairs(player_1_hand)
+    largest_pair = 0
+    second_largest_pair = 0 # Behövs för att hitta Full House
+    largest_pair_value = -1
+    for value, count in pairs.items():
+        # Vi vill få fram de kort som vi har flest av men om det finns flera
+        # med samma antal dubletter vill vi ha det med högsta värdet.
+        if count > largest_pair or (count == largest_pair and value > largest_pair_value):
+            second_largest_pair = largest_pair
+            largest_pair = count
+            largest_pair_value = value
+
+    if largest_pair == 4:
+        # Quads
+        player_1_hand_strength[0] = 7
+        kicker = -1
+        for card in player_1_hand:
+            value = card[0]
+            if value > kicker and value != largest_pair_value:
+                kicker = value
+        
+        player_1_hand_strength[1] = kicker
+    elif largest_pair == 3:
+        # TODO Fixa player_1_hand_strength[1].
+        if second_largest_pair >= 2:
+            # Full House
+            player_1_hand_strength[0] = 6
+        else:
+            # Three of a kind
+            player_1_hand_strength[0] = 3
+            
+    elif largest_pair == 2:
+        # TODO Fixa player_1_hand_strength[1].
+
+        # Kolla om det finns mer än ett par
+        second_pair_value = -1
+        for value, count in pairs.items():
+            if value != largest_pair_value and count == 2 and value > second_pair_value:
+                second_pair_value = value
+
+        if second_pair_value == -1:
+            # pair
+            player_1_hand_strength[0] = 1
+        else:
+            # Two pairs
+            player_1_hand_strength[0] = 1
+
+
     output = cards
     return output
     # return "player_1_cards: " + player_1_cards + "player_2_cards: " + player_2_cards
@@ -127,5 +123,5 @@ def count_pairs(card_list):
         else:
             card_pairs[value] = 1
     return card_pairs
-for _ in range(1000000):
+for _ in range(10000000):
     poker_simulator()
