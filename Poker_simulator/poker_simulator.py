@@ -71,50 +71,62 @@ def poker_simulator():
     for value, count in pairs.items():
         # Vi vill få fram de kort som vi har flest av men om det finns flera
         # med samma antal dubletter vill vi ha det med högsta värdet.
-        if count > 1:
-            if count == 2:
-                if count > largest_pair:
-                    second_largest_pair = largest_pair
-                    largest_pair = value
-            if count == 3:
-                second_largest_trips = largest_trips
-                largest_trips = value
-            if count == 4:
-                # Quads
-                player_1_hand_strength[0] = 7
-                kicker = -1
-                for card in player_1_hand:
-                    value = card[0]
-                    if value > kicker and value != largest_pair_value:
-                        kicker = value
-                
-                player_1_hand_strength[1] = kicker
+        if count == 2:
+            if count > largest_pair:
+                second_largest_pair = largest_pair
+                largest_pair = value
+        if count == 3:
+            second_largest_trips = largest_trips
+            largest_trips = value
+        if count == 4:
+            # Quads
+            player_1_hand_strength[0] = 7
+            kicker = get_kicker([largest_pair])
+            player_1_hand_strength[1] = kicker
 
-    if largest_pair == 3:
-        # TODO Fixa player_1_hand_strength[1].
-        if second_largest_pair >= 2:
+    if largest_trips != -1:
+        
+        if second_largest_trips != -1 or largest_pair != -1:
             # Full House
             player_1_hand_strength[0] = 6
+            player_1_hand_strength[1] = [largest_trips]
+            if second_largest_trips > largest_pair:
+                player_1_hand_strength[1].append(second_largest_trips)
+            else:
+                player_1_hand_strength[1].append(largest_par)
         else:
             # Three of a kind
             player_1_hand_strength[0] = 3
+            kicker = get_kicker([largest_trips])
+            player_1_hand_strength[1] = [kicker]
+            second_kicker = get_kicker([largest_trips, kicker])
+            player_1_hand_strength[1].append(second_kicker)
             
-    elif largest_pair == 2:
+    elif largest_pair != -1:
         # TODO Fixa player_1_hand_strength[1].
 
         # Kolla om det finns mer än ett par
-        second_pair_value = -1
+        second_pair = -1
         for value, count in pairs.items():
-            if value != largest_pair_value and count == 2 and value > second_pair_value:
-                second_pair_value = value
+            if value != largest_pair and count == 2 and value > second_pair:
+                second_pair = value
 
-        if second_pair_value == -1:
+        if second_pair == -1:
             # pair
             player_1_hand_strength[0] = 1
+            player_1_hand_strength[1] = [largest_pair]
+            kicker = get_kicker([largest_pair])
+            player_1_hand_strength[1].append(kicker)
+            second_kicker = get_kicker([largest_pair, kicker])
+            player_1_hand_strength[1].append(second_kicker)
+            third_kicker = get_kicker([largest_pair, kicker, second_kicker])
+            player_1_hand_strength[1].append(third_kicker)
         else:
             # Two pairs
             player_1_hand_strength[0] = 1
-
+            player_1_hand_strength[1] = [largest_pair, second_pair]
+            kicker = get_kicker([largest_pair, second_pair])
+            player_1_hand_strength[1].append(kicker)
 
     output = cards
     return output
@@ -130,4 +142,13 @@ def count_pairs(card_list):
             card_pairs[value] = 1
     return card_pairs
 for _ in range(10000000):
-    poker_simulator()
+    print(poker_simulator())
+
+def get_kicker(exclude):
+    kicker = -1
+    for card in player_1_hand:
+        value = card[0]
+        if value > kicker and value not in exclude:
+            kicker = value
+    
+    return kicker
