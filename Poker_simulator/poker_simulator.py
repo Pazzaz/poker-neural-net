@@ -51,7 +51,7 @@ def poker_simulator():
             else:
                 straight_flush_counter = 0
 
-        if int(player_1_hand_strength[0]) < 5:
+        if player_1_hand_strength[0] < 5:
             player_1_hand_strength[0] = 5
             player_1_hand_strength[1] = flush_cards[0]
             return player_1_hand_strength
@@ -77,6 +77,28 @@ def poker_simulator():
             kicker = get_kicker(player_1_hand, [largest_pair])
             player_1_hand_strength[1] = kicker
             return player_1_hand_strength
+
+    # Straight
+    #TODO Gör en "player_1_hand" som är en endimensionell array med bara values och inte suit. 
+    straight_counter = 0
+    sorted_player_1_hand = sorted(player_1_hand)
+    sorted_player_1_hand.reverse()
+    for first, second in zip(sorted_player_1_hand[:-1], sorted_player_1_hand[1:]):
+        a = first[0]
+        b = second[0]
+        if a == b+1 or (a == 12 and b == 3):
+            straight_counter += 1
+            if straight_counter == 4:
+                if sorted_player_1_hand[0] == sorted_player_1_hand[1]+1 and sorted_player_1_hand[1] == sorted_player_1_hand [2]+1:
+                    straight_strength = sorted_player_1_hand[0]
+                elif sorted_player_1_hand[1] == sorted_player_1_hand [2]+1 and sorted_player_1_hand[2] == sorted_player_1_hand[3]+1:
+                    straight_strength = sorted_player_1_hand[1]
+                else:
+                    straight_strength = sorted_player_1_hand[2]
+                player_1_hand_strength = [4, straight_strength]
+                return player_1_hand_strength
+        else:
+            straight_counter = 0
 
     if largest_trips != -1:
         
@@ -119,7 +141,7 @@ def poker_simulator():
             return player_1_hand_strength
         else:
             # Two pairs
-            player_1_hand_strength[0] = 1
+            player_1_hand_strength[0] = 2
             player_1_hand_strength[1] = [largest_pair, second_pair]
             kicker = get_kicker(player_1_hand, [largest_pair, second_pair])
             player_1_hand_strength[1].append(kicker)
@@ -148,5 +170,5 @@ def get_kicker(hand, exclude):
     
     return kicker
 
-for _ in range(10000000):
+for _ in range(1000):
     print(poker_simulator())
