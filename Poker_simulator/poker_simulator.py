@@ -60,7 +60,7 @@ def poker_simulator():
         largest_pair = 0
         second_largest_pair = 0 # Behövs för att hitta Full House
         largest_pair_value = -1
-        for value, count in pairs:
+        for value, count in pairs.items():
             # Vi vill få fram de kort som vi har flest av men om det finns flera
             # med samma antal dubletter vill vi ha det med högsta värdet.
             if count > largest_pair or (count == largest_pair and value > largest_pair_value):
@@ -88,12 +88,12 @@ def poker_simulator():
                 # Three of a kind
                 player_1_hand_strength[0] = 3
                 
-        elif largest_pair == 2
+        elif largest_pair == 2:
             # TODO Fixa player_1_hand_strength[1].
 
             # Kolla om det finns mer än ett par
             second_pair_value = -1
-            for value, count in pairs:
+            for value, count in pairs.items():
                 if value != largest_pair_value and count == 2 and value > second_pair_value:
                     second_pair_value = value
 
