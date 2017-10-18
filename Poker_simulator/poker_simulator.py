@@ -118,14 +118,6 @@ def poker_simulator():
     return output
     # return "player_1_cards: " + player_1_cards + "player_2_cards: " + player_2_cards
 
-def has_quads(hand):
-    values = [x[0] for x in hand]
-    pairs = count_pairs(values)
-    for value, count in pairs:
-        if count == 4:
-            return True
-    return False
-
 def count_pairs(card_list):
     card_pairs = {}
     for card in card_list:
