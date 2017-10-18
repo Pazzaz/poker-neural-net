@@ -17,7 +17,6 @@ def poker_simulator():
     player_1_hand_strength = [0,0]
     player_2_hand_strength = [0,0]
     board = cards[4:10]
-    #print(board)
     player_1_hand = player_1_hole_cards + board
     player_2_hand = player_2_hole_cards + board
     # Kolla efter flush
@@ -63,8 +62,6 @@ def poker_simulator():
     largest_trips = -1
     second_largest_trips = -1
     for value, count in pairs.items():
-        # Vi vill få fram de kort som vi har flest av men om det finns flera
-        # med samma antal dubletter vill vi ha det med högsta värdet.
         if count == 2:
             if count > largest_pair:
                 largest_pair = value
