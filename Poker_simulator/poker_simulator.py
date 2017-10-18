@@ -79,13 +79,9 @@ def poker_simulator():
             return player_1_hand_strength
 
     # Straight
-    #TODO Gör en "player_1_hand" som är en endimensionell array med bara values och inte suit. 
     straight_counter = 0
-    sorted_player_1_hand = sorted(player_1_hand)
-    sorted_player_1_hand.reverse()
-    for first, second in zip(sorted_player_1_hand[:-1], sorted_player_1_hand[1:]):
-        a = first[0]
-        b = second[0]
+    sorted_player_1_hand = [x[0] for x in sorted(player_1_hand, reverse=True)]
+    for a, b in zip(sorted_player_1_hand[:-1], sorted_player_1_hand[1:]):
         if a == b+1 or (a == 12 and b == 3):
             straight_counter += 1
             if straight_counter == 4:
