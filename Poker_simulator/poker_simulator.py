@@ -30,13 +30,14 @@ def poker_simulator():
     
     flush_cards = [x[0] for x in player_1_hand if x[1] == flush_suit]
     if flush_cards != []:
-        flush_cards.sort()
-        flush_cards.reverse()
-
         # Kolla om det finns någon straight flush 
+        flush_cards = sorted(flush_cards, reverse=True)
+        if 12 in flush_cards:
+            # Esset kan räknas som lägre än 2 i en stege
+            flush_cards.append(-1)
         straight_flush_counter = 0
         for a, b in zip(flush_cards[:-1], flush_cards[1:]):
-            if a == b+1 or (a == 12 and b == 3):
+            if a == b+1:
                 straight_flush_counter += 1
                 if straight_flush_counter == 4:
                     if flush_cards[0] == flush_cards[1]+1 and flush_cards[1] == flush_cards [2]+1:
@@ -47,7 +48,7 @@ def poker_simulator():
                         straight_flush_strength = flush_cards[2]
                     player_1_hand_strength = [8, straight_flush_strength]
                     return player_1_hand_strength
-            else:
+            elif a != b:
                 straight_flush_counter = 0
 
         if player_1_hand_strength[0] < 5:
@@ -77,9 +78,12 @@ def poker_simulator():
 
     # Straight
     straight_counter = 0
-    sorted_player_1_hand = [x[0] for x in sorted(player_1_hand, reverse=True)]
+    sorted_player_1_hand = [x[0] for x in player_1_hand]
+    sorted_player_1_hand = sorted(sorted_player_1_hand, reverse=True)
+    if 12 in sorted_player_1_hand:
+        sorted_player_1_hand.append(-1)
     for a, b in zip(sorted_player_1_hand[:-1], sorted_player_1_hand[1:]):
-        if a == b+1 or (a == 12 and b == 3):
+        if a == b+1:
             straight_counter += 1
             if straight_counter == 4:
                 if sorted_player_1_hand[0] == sorted_player_1_hand[1]+1 and sorted_player_1_hand[1] == sorted_player_1_hand [2]+1:
@@ -90,7 +94,7 @@ def poker_simulator():
                     straight_strength = sorted_player_1_hand[2]
                 player_1_hand_strength = [4, straight_strength]
                 return player_1_hand_strength
-        else:
+        elif a != b:
             straight_counter = 0
 
     if largest_trips != -1:
