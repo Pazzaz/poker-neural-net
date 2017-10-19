@@ -1,34 +1,18 @@
 import random
+import itertools
 
-def poker_simulator():
-    cards_drawn = []
-    cards = []
-    for i in range(9):
-        card = random.randint(0, 51)
-        while card in cards_drawn:
-            card = random.randint(0, 51)
-        card_value = card % 13
-        card_suit = card % 4
-        cards.append([card_value, card_suit])
-        cards_drawn.append(card)
-
-    player_1_hole_cards = cards[0:2]
-    player_2_hole_cards = cards[2:4]
-    player_1_hand_strength = [0,0]
-    player_2_hand_strength = [0,0]
-    board = cards[4:10]
-    player_1_hand = player_1_hole_cards + board
-    player_2_hand = player_2_hole_cards + board
+def poker_simulator(hand):
+    hand_strength = [0, 0]
     # Kolla efter flush
     suits_count_array = [0,0,0,0]
     flush_suit = -1
-    for i in player_1_hand:
+    for i in hand:
         suits_count_array[i[1]] += 1
     for i, suit in enumerate(suits_count_array):
         if suit >= 5:
             flush_suit = i
     
-    flush_cards = [x[0] for x in player_1_hand if x[1] == flush_suit]
+    flush_cards = [x[0] for x in hand if x[1] == flush_suit]
     if flush_cards != []:
         flush_cards.sort()
         flush_cards.reverse()
@@ -45,18 +29,17 @@ def poker_simulator():
                         straight_flush_strength = flush_cards[1]
                     else:
                         straight_flush_strength = flush_cards[2]
-                    player_1_hand_strength = [8, straight_flush_strength]
-                    return player_1_hand_strength
+                    hand_strength = [8, straight_flush_strength]
+                    return hand_strength
             else:
                 straight_flush_counter = 0
 
-        if player_1_hand_strength[0] < 5:
-            player_1_hand_strength[0] = 5
-            player_1_hand_strength[1] = flush_cards[0]
-            return player_1_hand_strength
+        hand_strength[0] = 5
+        hand_strength[1] = flush_cards[0]
+        return hand_strength
 
     # Kolla efter saker som har med par att göra
-    pairs = count_pairs(player_1_hand)
+    pairs = count_pairs(hand)
     largest_pair = -1
     largest_pair = -1
     largest_trips = -1
@@ -70,26 +53,26 @@ def poker_simulator():
             largest_trips = value
         if count == 4:
             # Quads
-            player_1_hand_strength[0] = 7
-            kicker = get_kicker(player_1_hand, [largest_pair])
-            player_1_hand_strength[1] = kicker
-            return player_1_hand_strength
+            hand_strength[0] = 7
+            kicker = get_kicker(hand, [largest_pair])
+            hand_strength[1] = kicker
+            return hand_strength
 
     # Straight
     straight_counter = 0
-    sorted_player_1_hand = [x[0] for x in sorted(player_1_hand, reverse=True)]
-    for a, b in zip(sorted_player_1_hand[:-1], sorted_player_1_hand[1:]):
+    sorted_hand = [x[0] for x in sorted(hand, reverse=True)]
+    for a, b in zip(sorted_hand[:-1], sorted_hand[1:]):
         if a == b+1 or (a == 12 and b == 3):
             straight_counter += 1
             if straight_counter == 4:
-                if sorted_player_1_hand[0] == sorted_player_1_hand[1]+1 and sorted_player_1_hand[1] == sorted_player_1_hand [2]+1:
-                    straight_strength = sorted_player_1_hand[0]
-                elif sorted_player_1_hand[1] == sorted_player_1_hand [2]+1 and sorted_player_1_hand[2] == sorted_player_1_hand[3]+1:
-                    straight_strength = sorted_player_1_hand[1]
+                if sorted_hand[0] == sorted_hand[1]+1 and sorted_hand[1] == sorted_hand [2]+1:
+                    straight_strength = sorted_hand[0]
+                elif sorted_hand[1] == sorted_hand [2]+1 and sorted_hand[2] == sorted_hand[3]+1:
+                    straight_strength = sorted_hand[1]
                 else:
-                    straight_strength = sorted_player_1_hand[2]
-                player_1_hand_strength = [4, straight_strength]
-                return player_1_hand_strength
+                    straight_strength = sorted_hand[2]
+                hand_strength = [4, straight_strength]
+                return hand_strength
         else:
             straight_counter = 0
 
@@ -97,22 +80,22 @@ def poker_simulator():
         
         if second_largest_trips != -1 or largest_pair != -1:
             # Full House
-            player_1_hand_strength[0] = 6
-            player_1_hand_strength[1] = [largest_trips]
+            hand_strength[0] = 6
+            hand_strength[1] = [largest_trips]
             if second_largest_trips > largest_pair:
-                player_1_hand_strength[1].append(second_largest_trips)
+                hand_strength[1].append(second_largest_trips)
             else:
-                player_1_hand_strength[1].append(largest_pair)
+                hand_strength[1].append(largest_pair)
 
-            return player_1_hand_strength
+            return hand_strength
         else:
             # Three of a kind
-            player_1_hand_strength[0] = 3
-            kicker = get_kicker(player_1_hand, [largest_trips])
-            player_1_hand_strength[1] = [kicker]
-            second_kicker = get_kicker(player_1_hand, [largest_trips, kicker])
-            player_1_hand_strength[1].append(second_kicker)
-            return player_1_hand_strength
+            hand_strength[0] = 3
+            kicker = get_kicker(hand, [largest_trips])
+            hand_strength[1] = [kicker]
+            second_kicker = get_kicker(hand, [largest_trips, kicker])
+            hand_strength[1].append(second_kicker)
+            return hand_strength
             
     elif largest_pair != -1:
         # Kolla om det finns mer än ett par
@@ -123,26 +106,26 @@ def poker_simulator():
 
         if second_pair == -1:
             # pair
-            player_1_hand_strength[0] = 1
-            player_1_hand_strength[1] = [largest_pair]
-            kicker = get_kicker(player_1_hand, [largest_pair])
-            player_1_hand_strength[1].append(kicker)
-            second_kicker = get_kicker(player_1_hand, [largest_pair, kicker])
-            player_1_hand_strength[1].append(second_kicker)
-            third_kicker = get_kicker(player_1_hand, [largest_pair, kicker, second_kicker])
-            player_1_hand_strength[1].append(third_kicker)
-            return player_1_hand_strength
+            hand_strength[0] = 1
+            hand_strength[1] = [largest_pair]
+            kicker = get_kicker(hand, [largest_pair])
+            hand_strength[1].append(kicker)
+            second_kicker = get_kicker(hand, [largest_pair, kicker])
+            hand_strength[1].append(second_kicker)
+            third_kicker = get_kicker(hand, [largest_pair, kicker, second_kicker])
+            hand_strength[1].append(third_kicker)
+            return hand_strength
         else:
             # Two pairs
-            player_1_hand_strength[0] = 2
-            player_1_hand_strength[1] = [largest_pair, second_pair]
-            kicker = get_kicker(player_1_hand, [largest_pair, second_pair])
-            player_1_hand_strength[1].append(kicker)
-            return player_1_hand_strength
+            hand_strength[0] = 2
+            hand_strength[1] = [largest_pair, second_pair]
+            kicker = get_kicker(hand, [largest_pair, second_pair])
+            hand_strength[1].append(kicker)
+            return hand_strength
 
     # High card
-    player_1_hand.sort(reverse=True)
-    return [0, player_1_hand]
+    hand.sort(reverse=True)
+    return [0, hand]
 
 def count_pairs(card_list):
     card_pairs = {}
@@ -163,5 +146,41 @@ def get_kicker(hand, exclude):
     
     return kicker
 
-for _ in range(1000):
-    print(poker_simulator())
+def get_hands():
+    cards = []
+    for i in range(52):
+        value = i % 13
+        suit = i % 4
+        cards.append([value, suit])
+    hands = itertools.combinations(cards, 7)
+    return hands
+    
+
+# royal_flush = 0
+# straight_flush = 0
+# quads = 0
+# full_house = 0
+# flush = 0
+# straight = 0
+# threes = 0
+# two_pair = 0
+# pair = 0
+# high_card = 0
+distribution = [0,0,0,0,0,0,0,0,0]
+total = 0
+hands = get_hands()
+for hand in hands:
+    result = poker_simulator(list(hand))
+    distribution[result[0]] += 1
+    total += 1
+    print(total)
+
+print("Straight + Royal flush: " + str(distribution[8]) + " " + str(distribution[8] * 100 / total))
+print("Quads: " + str(distribution[7]) + " " + str(distribution[7] * 100 / total))
+print("Full house: " + str(distribution[6]) + " " + str(distribution[6] * 100 / total))
+print("Flush: " + str(distribution[5])  + " " + str(distribution[5] * 100 / total))
+print("Straight: " + str(distribution[4])  + " " + str(distribution[4] * 100 / total))
+print("Threes: " + str(distribution[3])  + " " + str(distribution[3] * 100 / total))
+print("Two pair: " + str(distribution[2])  + " " + str(distribution[2] * 100 / total))
+print("Pair: " + str(distribution[1])  + " " + str(distribution[1] * 100 / total))
+print("High card: " + str(distribution[0])  + " " + str(distribution[0] * 100 / total))
