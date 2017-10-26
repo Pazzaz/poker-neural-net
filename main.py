@@ -1,5 +1,8 @@
+from Poker_simulator.poker_simulator import game
+
 import random
 import math
+
 
 class Neural_net:
     def __init__(self, complexity):
@@ -12,32 +15,15 @@ class Neural_net:
         '''
         self.complexity = complexity
         self.nodes = self.generate_nodes()
-        self.genes = self.generate_genes(32)
+        self.genes = self.generate_genes(8)
 
     def generate_genes(self, amount):
         genes = []
         while len(genes) < amount:
             trans = self.random_transformation()
             performance = 0
-            for _ in range(1000):
-                number_1 = random.randint(0, 10)
-                number_2 = random.randint(0, 10)
-                result = self.get_answer(trans, [number_1, number_2])
-                if (number_1 + number_2) > 10:
-                    if result == 1:
-                        performance += 1
-                    else:
-                        performance -= 1
-                else:
-                    if result == 1:
-                        performance -= 1
-                    else:
-                        performance += 1
-
-            print(performance)
-            if performance > 300:
-                print("Added")
-                genes.append([trans, performance, 0])
+            print("Added")
+            genes.append([trans, performance])
 
         return genes
 
@@ -122,6 +108,21 @@ class Neural_net:
                         else:
                             performance += 1
                 g[1] = performance
+    
+    def update_genes(self):
+        # Kill the worst genes
+        self.genes = sorted(self.genes, key=lambda x: x[1], reverse=True)
+        self.genes = self.genes[:(len(self.genes) // 2)]
+
+        # Print the performance and iteration for every gene
+        print(', '.join(str(gene[1]) for gene in self.genes))
+
+        # Breed new genes
+        random.shuffle(self.genes)
+        for g in range(len(self.genes)):
+            new_gene = self.combine_transformations(self.genes[g][0], self.genes[g+1][0])
+            self.genes.append([new_gene, 0])
+
 
     def combine_transformations(self, trans_one, trans_two):
         new_trans = []
@@ -137,7 +138,7 @@ class Neural_net:
 random.seed(11)
 
 # Create the normal net. Will fill itself with "random" (filtered) genes.
-nn = Neural_net([2,8,8,2])
+nn = Neural_net([14,8,8,2])
+nn2 = Neural_net([14,8,8,2])
 
-# Train the neural net
-nn.train(1000)
+game(nn, nn2, 100, 20)
