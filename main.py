@@ -3,7 +3,6 @@ from Poker_simulator.poker_simulator import play_against, play_self
 import random
 import math
 
-
 class Neural_net:
     def __init__(self, complexity):
         '''
@@ -54,9 +53,7 @@ class Neural_net:
             trans_row = iter(transformation[a-1])
             node = self.nodes[a]
             for b in range(len(self.nodes[a])):
-                node[b] = 0
-                for c in range(len(self.nodes[a-1])):
-                    node[b] += self.nodes[a-1][c] * next(trans_row)
+                node[b] = sum(map(lambda node, trans: node * trans, iter(self.nodes[a-1]), trans_row))
 
                 # Normalize the value
                 node[b] = math.tanh(node[b])
