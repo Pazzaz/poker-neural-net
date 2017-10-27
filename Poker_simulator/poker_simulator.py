@@ -18,7 +18,7 @@ def play_self(network, iterations, blinds):
 def play_game(gene_1, gene_2, blinds, net_1, net_2=None):
     if net_2 == None:
         net_2 = net_1
-    for _ in range(500):
+    for _ in range(4000):
         cards_drawn = []
         cards = []
         for i in range(9):
@@ -35,10 +35,14 @@ def play_game(gene_1, gene_2, blinds, net_1, net_2=None):
         player_1_hand = player_1_hole_cards + board
         player_2_hole_cards = cards[2:4]
         player_2_hand = player_2_hole_cards + board
-        flattened_player_1_hand = [number for hand in player_1_hand for number in hand]
+        
+        flattened_board = [number for hand in board for number in hand]
+        flattened_player_1_hole_cards = [number for hand in player_1_hole_cards for number in hand]
+        flattened_player_1_hand = flattened_board + flattened_player_1_hole_cards
         player_1_answer = net_1.get_answer(gene_1[0], flattened_player_1_hand)
         if player_1_answer != 0:
-            flattened_player_2_hand = [number for hand in player_1_hand for number in hand]
+            flattened_player_2_hole_cards = [number for hand in player_2_hole_cards for number in hand]
+            flattened_player_2_hand = flattened_board + flattened_player_2_hole_cards
             player_2_answer = net_2.get_answer(gene_2[0], flattened_player_2_hand)
             if player_2_answer != 0:
                 player_1_result = evaluate_hand(player_1_hand)
