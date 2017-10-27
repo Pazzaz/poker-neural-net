@@ -1,53 +1,62 @@
 import random
+import itertools
 
-def game(net_1, net_2, iterations, blinds):
+def play_against(net_1, net_2, iterations, blinds):
     for i in range(iterations):
         for gene_from_1 in net_1.genes:
             for gene_from_2 in net_2.genes:
-                for _ in range(500):
-                    cards_drawn = []
-                    cards = []
-                    for i in range(9):
-                        card = random.randint(0, 51)
-                        while card in cards_drawn:
-                            card = random.randint(0, 51)
-                        card_value = card % 13
-                        card_suit = card % 4
-                        cards.append([card_value, card_suit])
-                        cards_drawn.append(card)
-
-                    player_1_hole_cards = cards[0:2]
-                    board = cards[4:10]
-                    player_1_hand = player_1_hole_cards + board
-                    player_2_hole_cards = cards[2:4]
-                    player_2_hand = player_2_hole_cards + board
-                    flattened_player_1_hand = [number for hand in player_1_hand for number in hand]
-                    player_1_answer = net_1.get_answer(gene_from_1[0], flattened_player_1_hand)
-                    if player_1_answer != 0:
-                        flattened_player_2_hand = [number for hand in player_1_hand for number in hand]
-                        player_2_answer = net_2.get_answer(gene_from_2[0], flattened_player_2_hand)
-                        if player_2_answer != 0:
-                            player_1_result = evaluate_hand(player_1_hand)
-                            player_2_result = evaluate_hand(player_2_hand)
-                            if player_1_result > player_2_result:
-                                gene_from_1[1] += blinds
-                                gene_from_2[1] -= blinds
-                            else:
-                                gene_from_1[1] -= blinds
-                                gene_from_2[1] += blinds
-                    
-                        else:
-                            gene_from_1[1] += 1
-                            gene_from_2[1] -= 1
-
-                    else:
-                        gene_from_1[1] -= 0.5
-                        gene_from_2[1] += 0.5
-
+                play_game(gene_from_1, gene_from_2, blinds, net_1, net_2)
         net_1.update_genes()
         net_2.update_genes()
+
+def play_self(network, iterations, blinds):
+    for i in range(iterations):
+        for first_gene, second_gene in itertools.combinations(network.genes, 2):
+            play_game(first_gene, second_gene, blinds, network)
+        network.update_genes()
                 
-                    
+def play_game(gene_1, gene_2, blinds, net_1, net_2=None):
+    if net_2 == None:
+        net_2 = net_1
+    for _ in range(500):
+        cards_drawn = []
+        cards = []
+        for i in range(9):
+            card = random.randint(0, 51)
+            while card in cards_drawn:
+                card = random.randint(0, 51)
+            card_value = card % 13
+            card_suit = card % 4
+            cards.append([card_value, card_suit])
+            cards_drawn.append(card)
+
+        player_1_hole_cards = cards[0:2]
+        board = cards[4:10]
+        player_1_hand = player_1_hole_cards + board
+        player_2_hole_cards = cards[2:4]
+        player_2_hand = player_2_hole_cards + board
+        flattened_player_1_hand = [number for hand in player_1_hand for number in hand]
+        player_1_answer = net_1.get_answer(gene_1[0], flattened_player_1_hand)
+        if player_1_answer != 0:
+            flattened_player_2_hand = [number for hand in player_1_hand for number in hand]
+            player_2_answer = net_2.get_answer(gene_2[0], flattened_player_2_hand)
+            if player_2_answer != 0:
+                player_1_result = evaluate_hand(player_1_hand)
+                player_2_result = evaluate_hand(player_2_hand)
+                if player_1_result > player_2_result:
+                    gene_1[1] += blinds
+                    gene_2[1] -= blinds
+                else:
+                    gene_1[1] -= blinds
+                    gene_2[1] += blinds
+        
+            else:
+                gene_1[1] += 1
+                gene_2[1] -= 1
+
+        else:
+            gene_1[1] -= 0.5
+            gene_2[1] += 0.5
                 
 
 def evaluate_hand(hand):
@@ -63,7 +72,7 @@ def evaluate_hand(hand):
     
     flush_cards = [x[0] for x in hand if x[1] == flush_suit]
     if flush_cards != []:
-        # Kolla om det finns någon straight flush 
+        # Kolla om det finns någon straight flush
         flush_cards = sorted(flush_cards, reverse=True)
         if 12 in flush_cards:
             # Esset kan räknas som lägre än 2 i en stege
