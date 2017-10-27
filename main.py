@@ -52,8 +52,8 @@ class Neural_net:
         # Calculate the value of every node
         for a in range(1, len(self.nodes)):
             trans_row = iter(transformation[a-1])
+            node = self.nodes[a]
             for b in range(len(self.nodes[a])):
-                node = self.nodes[a]
                 node[b] = 0
                 for c in range(len(self.nodes[a-1])):
                     node[b] += self.nodes[a-1][c] * next(trans_row)
