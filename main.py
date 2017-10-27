@@ -1,4 +1,4 @@
-from Poker_simulator.poker_simulator import game
+from Poker_simulator.poker_simulator import play_against, play_self
 
 import random
 import math
@@ -22,7 +22,6 @@ class Neural_net:
         while len(genes) < amount:
             trans = self.random_transformation()
             performance = 0
-            print("Added")
             genes.append([trans, performance])
 
         return genes
@@ -117,6 +116,10 @@ class Neural_net:
         # Print the performance and iteration for every gene
         print(', '.join(str(gene[1]) for gene in self.genes))
 
+        # Set everyones performance to 0
+        for gene in self.genes:
+            gene[1] = 0
+
         # Breed new genes
         random.shuffle(self.genes)
         for g in range(len(self.genes)):
@@ -141,4 +144,9 @@ random.seed(11)
 nn = Neural_net([14,8,8,2])
 nn2 = Neural_net([14,8,8,2])
 
-game(nn, nn2, 100, 20)
+play_self(nn, 20, 20)
+print("First is done practicing")
+play_self(nn2, 20, 20)
+print("Second is done practicing")
+
+play_against(nn, nn2, 100, 20)
