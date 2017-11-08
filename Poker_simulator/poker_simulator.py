@@ -3,19 +3,19 @@ import itertools
 
 def play_against(net_1, net_2, iterations, blinds):
     for i in range(iterations):
-        for gene_from_1 in net_1.genes:
-            for gene_from_2 in net_2.genes:
-                play_game(gene_from_1, gene_from_2, blinds, net_1, net_2)
-        net_1.update_genes()
-        net_2.update_genes()
+        for network_from_1 in net_1.networks:
+            for network_from_2 in net_2.networks:
+                play_game(network_from_1, network_from_2, blinds, net_1, net_2)
+        net_1.update_networks()
+        net_2.update_networks()
 
 def play_self(network, iterations, blinds):
     for i in range(iterations):
-        for first_gene, second_gene in itertools.combinations(network.genes, 2):
-            play_game(first_gene, second_gene, blinds, network)
-        network.update_genes()
+        for first_network, second_network in itertools.combinations(network.networks, 2):
+            play_game(first_network, second_network, blinds, network)
+        network.update_networks()
                 
-def play_game(gene_1, gene_2, blinds, net_1, net_2=None):
+def play_game(network_1, network_2, blinds, net_1, net_2=None):
     if net_2 == None:
         net_2 = net_1
     for _ in range(4000):
@@ -39,28 +39,28 @@ def play_game(gene_1, gene_2, blinds, net_1, net_2=None):
         flattened_board = [number for hand in board for number in hand]
         flattened_player_1_hole_cards = [number for hand in player_1_hole_cards for number in hand]
         flattened_player_1_hand = flattened_board + flattened_player_1_hole_cards
-        player_1_answer = net_1.get_answer(gene_1[0], flattened_player_1_hand)
+        player_1_answer = net_1.get_answer(network_1[0], flattened_player_1_hand)
         if player_1_answer != 0:
             flattened_player_2_hole_cards = [number for hand in player_2_hole_cards for number in hand]
             flattened_player_2_hand = flattened_board + flattened_player_2_hole_cards
-            player_2_answer = net_2.get_answer(gene_2[0], flattened_player_2_hand)
+            player_2_answer = net_2.get_answer(network_2[0], flattened_player_2_hand)
             if player_2_answer != 0:
                 player_1_result = evaluate_hand(player_1_hand)
                 player_2_result = evaluate_hand(player_2_hand)
                 if player_1_result > player_2_result:
-                    gene_1[1] += blinds
-                    gene_2[1] -= blinds
+                    network_1[1] += blinds
+                    network_2[1] -= blinds
                 else:
-                    gene_1[1] -= blinds
-                    gene_2[1] += blinds
+                    network_1[1] -= blinds
+                    network_2[1] += blinds
         
             else:
-                gene_1[1] += 1
-                gene_2[1] -= 1
+                network_1[1] += 1
+                network_2[1] -= 1
 
         else:
-            gene_1[1] -= 0.5
-            gene_2[1] += 0.5
+            network_1[1] -= 0.5
+            network_2[1] += 0.5
                 
 
 def evaluate_hand(hand):

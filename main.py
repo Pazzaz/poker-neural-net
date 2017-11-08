@@ -3,7 +3,7 @@ from Poker_simulator.poker_simulator import play_against, play_self
 import random
 import math
 
-class Neural_net:
+class Neural_net_collection:
     def __init__(self, complexity):
         '''
         'complexity' is a list of how the nodes should be structured. 
@@ -14,16 +14,16 @@ class Neural_net:
         '''
         self.complexity = complexity
         self.nodes = self.generate_nodes()
-        self.genes = self.generate_genes(8)
+        self.networks = self.generate_networks(8)
 
-    def generate_genes(self, amount):
-        genes = []
-        while len(genes) < amount:
+    def generate_networks(self, amount):
+        networks = []
+        while len(networks) < amount:
             trans = self.random_transformation()
             performance = 0
-            genes.append([trans, performance])
+            networks.append([trans, performance])
 
-        return genes
+        return networks
 
     def generate_nodes(self):
         nodes = []
@@ -72,22 +72,22 @@ class Neural_net:
 
     def train(self, iterations):
         for a in range(iterations):
-            # Kill the worst genes
-            self.genes = sorted(self.genes, key=lambda x: x[1], reverse=True)
-            self.genes = self.genes[:(len(self.genes) // 2)]
+            # Kill the worst networks
+            self.networks = sorted(self.networks, key=lambda x: x[1], reverse=True)
+            self.networks = self.networks[:(len(self.networks) // 2)]
 
-            # Print the performance and iteration for every gene
-            print(', '.join(str(gene[1]) for gene in self.genes))
-            print(',  '.join(str(gene[2]) for gene in self.genes))
+            # Print the performance and iteration for every network
+            print(', '.join(str(network[1]) for network in self.networks))
+            print(',  '.join(str(network[2]) for network in self.networks))
 
-            # Breed new genes
-            random.shuffle(self.genes)
-            for g in range(len(self.genes)):
-                new_gene = self.combine_transformations(self.genes[g][0], self.genes[g+1][0])
-                self.genes.append([new_gene, 0, a+1])
+            # Breed new networks
+            random.shuffle(self.networks)
+            for g in range(len(self.networks)):
+                new_network = self.combine_transformations(self.networks[g][0], self.networks[g+1][0])
+                self.networks.append([new_network, 0, a+1])
 
-            # Test the genes
-            for g in self.genes:
+            # Test the networks
+            for g in self.networks:
                 performance = 0
                 for c in range(1000):
                     number_1 = random.randint(0, 10)
@@ -105,23 +105,23 @@ class Neural_net:
                             performance += 1
                 g[1] = performance
     
-    def update_genes(self):
-        # Kill the worst genes
-        self.genes = sorted(self.genes, key=lambda x: x[1], reverse=True)
-        self.genes = self.genes[:(len(self.genes) // 2)]
+    def update_networks(self):
+        # Kill the worst networks
+        self.networks = sorted(self.networks, key=lambda x: x[1], reverse=True)
+        self.networks = self.networks[:(len(self.networks) // 2)]
 
-        # Print the performance and iteration for every gene
-        print(', '.join(str(gene[1]) for gene in self.genes))
+        # Print the performance and iteration for every network
+        print(', '.join(str(network[1]) for network in self.networks))
 
         # Set everyones performance to 0
-        for gene in self.genes:
-            gene[1] = 0
+        for network in self.networks:
+            network[1] = 0
 
-        # Breed new genes
-        random.shuffle(self.genes)
-        for g in range(len(self.genes)):
-            new_gene = self.combine_transformations(self.genes[g][0], self.genes[g+1][0])
-            self.genes.append([new_gene, 0])
+        # Breed new networks
+        random.shuffle(self.networks)
+        for g in range(len(self.networks)):
+            new_network = self.combine_transformations(self.networks[g][0], self.networks[g+1][0])
+            self.networks.append([new_network, 0])
 
 
     def combine_transformations(self, trans_one, trans_two):
@@ -137,9 +137,9 @@ class Neural_net:
 # Specify the seed to use. Useful for debugging.
 random.seed(11)
 
-# Create the normal net. Will fill itself with "random" (filtered) genes.
-nn = Neural_net([14,8,8,2])
-nn2 = Neural_net([14,8,8,2])
+# Create the normal net. Will fill itself with "random" (filtered) networks.
+nn = Neural_net_collection([14,8,8,2])
+nn2 = Neural_net_collection([14,8,8,2])
 
 play_self(nn, 20, 20)
 print("First is done practicing")
