@@ -17,17 +17,17 @@ def play_against(net_1, net_2, iterations, blinds, learning=True):
         net_1.reset_performance()
         net_2.reset_performance()
 
-def play_self(network, iterations, blinds, learning=True):
+def play_self(network_collection, iterations, blinds, learning=True):
     for i in range(iterations):
-        for first_network, second_network in itertools.combinations(network.networks, 2):
-            play_game(first_network, second_network, blinds, network)
+        for first_network_collection, second_network_collection in itertools.combinations(network_collection.networks, 2):
+            play_game(first_network_collection, second_network_collection, blinds, network_collection)
         if learning:
-            network.update_networks()
+            network_collection.update_networks()
 
         # Print the performance and iteration for every network
-        print(', '.join(str(network[1]) for network in network.networks))
+        print(', '.join(str(network[1]) for network in network_collection.networks))
         
-        network.reset_performance()
+        network_collection.reset_performance()
         
 def play_game(network_1, network_2, blinds, net_1, net_2=None):
     if net_2 == None:
