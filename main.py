@@ -110,19 +110,16 @@ class Neural_net_collection:
         self.networks = sorted(self.networks, key=lambda x: x[1], reverse=True)
         self.networks = self.networks[:(len(self.networks) // 2)]
 
-        # Print the performance and iteration for every network
-        print(', '.join(str(network[1]) for network in self.networks))
-
-        # Set everyones performance to 0
-        for network in self.networks:
-            network[1] = 0
-
         # Breed new networks
         random.shuffle(self.networks)
         for g in range(len(self.networks)):
             new_network = self.combine_transformations(self.networks[g][0], self.networks[g+1][0])
             self.networks.append([new_network, 0])
 
+    def reset_performance(self):
+        # Set everyones performance to 0
+        for network in self.networks:
+            network[1] = 0
 
     def combine_transformations(self, trans_one, trans_two):
         new_trans = []
@@ -141,9 +138,9 @@ random.seed(11)
 nn = Neural_net_collection([14,8,8,2])
 nn2 = Neural_net_collection([14,8,8,2])
 
-play_self(nn, 20, 20)
+play_self(nn, 20, 20, False)
 print("First is done practicing")
-play_self(nn2, 20, 20)
+play_self(nn2, 20, 20, False)
 print("Second is done practicing")
 
 play_against(nn, nn2, 100, 20)

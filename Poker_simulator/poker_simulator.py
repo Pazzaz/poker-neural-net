@@ -1,20 +1,34 @@
 import random
 import itertools
 
-def play_against(net_1, net_2, iterations, blinds):
+def play_against(net_1, net_2, iterations, blinds, learning=True):
     for i in range(iterations):
         for network_from_1 in net_1.networks:
             for network_from_2 in net_2.networks:
                 play_game(network_from_1, network_from_2, blinds, net_1, net_2)
-        net_1.update_networks()
-        net_2.update_networks()
+        if learning:
+            net_1.update_networks()
+            net_2.update_networks()
 
-def play_self(network, iterations, blinds):
+        # Print the performance and iteration for every network
+        print(', '.join(str(network[1]) for network in net_1.networks))
+        print(', '.join(str(network[1]) for network in net_2.networks))
+
+        net_1.reset_performance()
+        net_2.reset_performance()
+
+def play_self(network, iterations, blinds, learning=True):
     for i in range(iterations):
         for first_network, second_network in itertools.combinations(network.networks, 2):
             play_game(first_network, second_network, blinds, network)
-        network.update_networks()
-                
+        if learning:
+            network.update_networks()
+
+        # Print the performance and iteration for every network
+        print(', '.join(str(network[1]) for network in network.networks))
+        
+        network.reset_performance()
+        
 def play_game(network_1, network_2, blinds, net_1, net_2=None):
     if net_2 == None:
         net_2 = net_1
