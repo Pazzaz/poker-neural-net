@@ -12,6 +12,7 @@ class Neural_net_collection:
         nodes on each layer and the end should be the output 
         (always two for now too).
         '''
+        self.network_count = 0
         self.complexity = complexity
         self.nodes = self.generate_nodes()
         self.networks = self.generate_networks(8)
@@ -21,7 +22,8 @@ class Neural_net_collection:
         while len(networks) < amount:
             trans = self.random_transformation()
             performance = 0
-            networks.append([trans, performance])
+            networks.append([trans, performance, self.network_count])
+            self.network_count += 1
 
         return networks
 
@@ -111,10 +113,10 @@ class Neural_net_collection:
         self.networks = self.networks[:(len(self.networks) // 2)]
 
         # Breed new networks
-        random.shuffle(self.networks)
         for g in range(len(self.networks)):
-            new_network = self.combine_transformations(self.networks[g][0], self.networks[g+1][0])
-            self.networks.append([new_network, 0])
+            new_network = self.combine_transformations(random.choice(self.networks)[0], random.choice(self.networks)[0])
+            self.networks.append([new_network, 0, self.network_count])
+            self.network_count += 1
 
     def reset_performance(self):
         # Set everyones performance to 0
@@ -138,6 +140,8 @@ random.seed(11)
 nn = Neural_net_collection([14,8,8,2])
 nn2 = Neural_net_collection([14,8,8,2])
 
+play_self(nn, 50, 20)
+print("TESTING")
 play_self(nn, 20, 20, False)
 print("First is done practicing")
 play_self(nn2, 20, 20, False)

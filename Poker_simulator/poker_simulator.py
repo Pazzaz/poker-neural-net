@@ -11,8 +11,8 @@ def play_against(net_1, net_2, iterations, blinds, learning=True):
             net_2.update_networks()
 
         # Print the performance and iteration for every network
-        print(', '.join(str(network[1]) for network in net_1.networks))
-        print(', '.join(str(network[1]) for network in net_2.networks))
+        print(', '.join(str(network[2]) + ": " + str(network[1]) for network in net_1.networks))
+        print(', '.join(str(network[2]) + ": " + str(network[1]) for network in net_2.networks))
 
         net_1.reset_performance()
         net_2.reset_performance()
@@ -25,7 +25,7 @@ def play_self(network_collection, iterations, blinds, learning=True):
             network_collection.update_networks()
 
         # Print the performance and iteration for every network
-        print(', '.join(str(network[1]) for network in network_collection.networks))
+        print("iteration " + str(i) + ": " + ', '.join(str(network[2]) + ": " + str(network[1]) for network in network_collection.networks))
         
         network_collection.reset_performance()
         
