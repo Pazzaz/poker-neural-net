@@ -8,7 +8,7 @@ class Neural_net_collection:
         '''
         'complexity' is a list of how the nodes should be structured. 
         The form should be [2, a, b, c, 2] with the beginning being the 
-        input (always two for now), 'a' 'b' & 'c' being the number of 
+        input 'a' 'b' & 'c' being the number of 
         nodes on each layer and the end should be the output 
         (always two for now too).
         '''
