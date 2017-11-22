@@ -99,41 +99,6 @@ class Neural_net_collection:
 
         return output
 
-    def train(self, iterations):
-        for a in range(iterations):
-            # Kill the worst networks
-            self.networks = sorted(self.networks, key=lambda x: x[1], reverse=True)
-            self.networks = self.networks[:(len(self.networks) // 2)]
-
-            # Print the performance and iteration for every network
-            print(', '.join(str(network[1]) for network in self.networks))
-            print(',  '.join(str(network[2]) for network in self.networks))
-
-            # Breed new networks
-            random.shuffle(self.networks)
-            for g in range(len(self.networks)):
-                new_network = self.combine_transformations(self.networks[g][0], self.networks[g+1][0])
-                self.networks.append([new_network, 0, a+1])
-
-            # Test the networks
-            for g in self.networks:
-                performance = 0
-                for c in range(1000):
-                    number_1 = random.randint(0, 10)
-                    number_2 = random.randint(0, 10)
-                    result = self.get_answer(g[0], [number_1, number_2])
-                    if (number_1 + number_2) > 10:
-                        if result == 1:
-                            performance += 1
-                        else:
-                            performance -= 1
-                    else:
-                        if result == 1:
-                            performance -= 1
-                        else:
-                            performance += 1
-                g[1] = performance
-    
     def update_networks(self):
         # Kill the worst networks
         self.networks = sorted(self.networks, key=lambda x: x[1], reverse=True)
