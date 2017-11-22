@@ -4,7 +4,7 @@ import random
 import math
 
 class Neural_net_collection:
-    def __init__(self, complexity):
+    def __init__(self, complexity, load_networks=0, network_count=8):
         '''
         'complexity' is a list of how the nodes should be structured. 
         The form should be [2, a, b, c, 2] with the beginning being the 
@@ -15,12 +15,16 @@ class Neural_net_collection:
         self.network_count = 0
         self.complexity = complexity
         self.nodes = self.generate_nodes()
-        self.networks = self.generate_networks(8)
+        self.networks = self.generate_networks(load_amount=load_networks, total_amount=network_count)
 
-    def generate_networks(self, amount):
+    def generate_networks(self, load_amount, total_amount):
         networks = []
-        while len(networks) < amount:
+        while len(networks) < total_amount:
+            if load_amount == 0:
             trans = self.random_transformation()
+            else:
+                trans = self.load_transformation()
+                load_amount -= 1
             performance = 0
             networks.append([trans, performance, self.network_count])
             self.network_count += 1
@@ -34,6 +38,29 @@ class Neural_net_collection:
             nodes.append(node_row)
 
         return nodes
+
+    def save_best_network(self):
+        filename = input("Where do you want to save it? ")
+        # Structure the output format
+        output = ""
+        for row in self.networks[0][0]:
+            output += ','.join(str(weight) for weight in row)
+            output += "\n"
+        
+        # Write the output
+        write_file = open(filename, "w")
+        write_file.write(output)
+
+    def load_transformation(self):
+        filename = input("Where did you save the network? ")
+        saved_file = open(filename, "r")
+        transformation = []
+        for row in saved_file.readlines():
+            transformation.append([])
+            for weight in row.split(","):
+                transformation[-1].append(float(weight))
+
+        return transformation
 
     def random_transformation(self):
         transformation = []
@@ -137,8 +164,8 @@ class Neural_net_collection:
 random.seed(11)
 
 # Create the normal net. Will fill itself with "random" (filtered) networks.
-nn = Neural_net_collection([14,8,8,2])
-nn2 = Neural_net_collection([14,8,8,2])
+nn = Neural_net_collection(complexity=[4,8,8,2], load_networks=2, network_count=2)
+nn2 = Neural_net_collection(complexity=[4,20,10,2], load_networks=2, network_count=2)
 
 play_self(nn, 50, 20)
 print("TESTING")

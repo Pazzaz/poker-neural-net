@@ -16,6 +16,10 @@ def play_against(net_1, net_2, iterations, blinds, learning=True):
 
         net_1.reset_performance()
         net_2.reset_performance()
+    answer = input("Do you want to save the networks? y/n ")
+    if answer == "y":
+        net_1.save_best_network()
+        net_2.save_best_network()
 
 def play_self(network_collection, iterations, blinds, learning=True):
     for i in range(iterations):
