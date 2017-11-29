@@ -96,12 +96,12 @@ class Neural_net_collection:
             if  largest_value < node_value:
                 largest_value = node_value
                 output = i
-
         return output
 
-    def update_networks(self):
+    def update_networks(self, iteration):
         # Kill the worst networks
         self.networks = sorted(self.networks, key=lambda x: x[1], reverse=True)
+        self.print_networks(iteration)
         self.networks = self.networks[:(len(self.networks) // 2)]
 
         # Breed new networks
@@ -109,6 +109,9 @@ class Neural_net_collection:
             new_network = self.combine_transformations(random.choice(self.networks)[0], random.choice(self.networks)[0])
             self.networks.append([new_network, 0, self.network_count])
             self.network_count += 1
+
+    def print_networks(self, iteration):
+        print("iteration " + str(iteration) + ": " + ', '.join(str(network[2]) + ": " + str(network[1]) for network in self.networks))
 
     def reset_performance(self):
         # Set everyones performance to 0
