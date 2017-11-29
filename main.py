@@ -60,6 +60,13 @@ class Neural_net_collection:
             for weight in row.split(","):
                 transformation[-1].append(float(weight))
 
+        # Validate
+        for index, (nodes_1, nodes_2) in enumerate(zip(self.complexity[1:], self.complexity[:1])):
+            weight_count = nodes_1 * nodes_2
+            if len(transformation[index]) != weight_count:
+                print("Loaded network doesn't match 'complexity'")
+                exit()
+
         return transformation
 
     def random_transformation(self):
