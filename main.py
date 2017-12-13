@@ -4,7 +4,7 @@ import random
 import math
 
 class Neural_net_collection:
-    def __init__(self, complexity, load_networks=0, network_count=8):
+    def __init__(self, complexity, mutation_rate, network_count, load_networks=0):
         '''
         'complexity' is a list of how the nodes should be structured. 
         The form should be [2, a, b, c, 2] with the beginning being the 
@@ -13,6 +13,7 @@ class Neural_net_collection:
         (always two for now too).
         '''
         self.network_count = 0
+        self.mutation_rate = mutation_rate
         self.complexity = complexity
         self.nodes = self.generate_nodes()
         self.networks = self.generate_networks(load_amount=load_networks, total_amount=network_count)
@@ -130,7 +131,7 @@ class Neural_net_collection:
         for a in range(len(trans_one)):
             new_trans.append([])
             for one, two in zip(trans_one[a], trans_two[a]):
-                mutation = random.uniform(-0.1, 0.1)
+                mutation = random.uniform(-self.mutation_rate, self.mutation_rate)
                 # Randomly choose connections between trans_one and trans_two
                 new_trans[a].append(random.choice([one, two]) + mutation)
         return new_trans
@@ -139,8 +140,8 @@ class Neural_net_collection:
 random.seed(11)
 
 # Create the normal net. Will fill itself with "random" (filtered) networks.
-nn = Neural_net_collection(complexity=[4,8,8,2], load_networks=2, network_count=2)
-nn2 = Neural_net_collection(complexity=[4,20,10,2], load_networks=2, network_count=2)
+nn = Neural_net_collection(complexity=[4,40,20,2], load_networks=1, network_count=1, mutation_rate=1)
+nn2 = Neural_net_collection(complexity=[4,20,20,10,26,2], load_networks=1, network_count=1, mutation_rate=1)
 
 play_self(nn, 50, 20)
 print("TESTING")
