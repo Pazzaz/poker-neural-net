@@ -24,7 +24,7 @@ class Neural_net_collection:
         networks = []
         while len(networks) < total_amount:
             if load_amount == 0:
-            trans = self.random_transformation()
+                trans = self.random_transformation()
             else:
                 trans = self.load_transformation()
                 load_amount -= 1
