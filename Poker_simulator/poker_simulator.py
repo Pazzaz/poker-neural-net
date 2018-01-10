@@ -20,7 +20,7 @@ def play_against(net_1, net_2, iterations, blinds, learning=True):
         net_1.save_best_network()
         net_2.save_best_network()
 
-def play_self(network_collection, iterations, blinds, learning=True):
+def play_self(network_collection, iterations, blinds, learning=True, print_debug=False):
     for i in range(iterations):
         for first_network, second_network in itertools.combinations(network_collection.networks, 2):
             play_game(first_network, second_network, blinds, network_collection)
@@ -30,11 +30,13 @@ def play_self(network_collection, iterations, blinds, learning=True):
             network_collection.print_networks(i)
 
         network_collection.reset_performance()
+        if print_debug:
+            network_collection.test_best_network()
         
 def play_game(network_1, network_2, blinds, net_1, net_2=None):
     if net_2 == None:
         net_2 = net_1
-    for _ in range(4000):
+    for _ in range(30000):
         cards_drawn = []
         cards = []
         for i in range(9):

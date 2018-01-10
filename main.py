@@ -138,46 +138,46 @@ class Neural_net_collection:
                 new_trans[a].append(random.choice([one, two]) + mutation)
         return new_trans
 
+    def test_best_network(self):
+        data = []
+        for a in range(13):
+            data.append([])
+            for b in range(13):
+                suit_answers = 0
+                suit_answer_sum = 0
+                for suit_a in range(4):
+                    for suit_b in range(4):
+                        if a == b and suit_a == suit_b:
+                            continue
+                        given_cards = [[a, suit_a], [b, suit_b]]
+                        input_cards = [number for hand in sorted(given_cards) for number in hand]
+                        answer = self.get_answer(self.networks[0][0], input_cards)
+                        suit_answers += 1
+                        suit_answer_sum += answer
+                answer = suit_answer_sum / suit_answers
+                data[-1].append(answer)
+
+        cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+        layout = go.Layout(
+            title = "Heatmap " + str(self.networks[0][2]),
+            xaxis = dict(
+                type = "category",
+            ),
+            yaxis = dict(
+                type = "category",
+                scaleanchor = "x",
+            ),
+        )
+        trace = go.Heatmap(z=data, x=cards, y=cards)
+        fig = go.Figure(data=[trace], layout=layout)
+        py.plot(fig, filename='basic-heatmap.html')
+
 # Specify the seed to use. Useful for debugging.
 random.seed(11)
 
 # Create the normal net. Will fill itself with "random" (filtered) networks.
-nn = Neural_net_collection(complexity=[4,40,20,2], load_networks=1, network_count=1, mutation_rate=1)
-nn2 = Neural_net_collection(complexity=[4,20,20,10,26,2], load_networks=1, network_count=1, mutation_rate=1)
+nn = Neural_net_collection(complexity=[4,40,20,10,2], load_networks=0, network_count=4, mutation_rate=1)
 
+play_self(nn, iterations=40, blinds=20, print_debug=True)
 
-def test_network(network):
-    data = []
-    for a in range(13):
-        data.append([])
-        for b in range(13):
-            suit_answers = 0
-            suit_answer_sum = 0
-            for suit_a in range(4):
-                for suit_b in range(4):
-                    if a == b and suit_a == suit_b:
-                        continue
-                    given_cards = [[a, suit_a], [b, suit_b]]
-                    input_cards = [number for hand in sorted(given_cards) for number in hand]
-                    answer = network.get_answer(network.networks[0][0], input_cards)
-                    suit_answers += 1
-                    suit_answer_sum += answer
-            data[-1].append(suit_answer_sum / suit_answers)
-
-    cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-    layout = go.Layout(
-        title = "Heatmap",
-        xaxis = dict(
-            type = "category",
-        ),
-        yaxis = dict(
-            type = "category",
-            scaleanchor = "x",
-        ),
-    )
-    trace = go.Heatmap(z=data, x=cards, y=cards)
-    fig = go.Figure(data=[trace], layout=layout)
-    py.plot(fig, filename='basic-heatmap')
-
-
-test_network(nn)
+nn.save_best_network()
