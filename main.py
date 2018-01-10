@@ -2,6 +2,8 @@ from Poker_simulator.poker_simulator import play_against, play_self
 
 import random
 import math
+import plotly.offline as py
+import plotly.graph_objs as go
 
 class Neural_net_collection:
     def __init__(self, complexity, mutation_rate, network_count, load_networks=0):
@@ -143,11 +145,39 @@ random.seed(11)
 nn = Neural_net_collection(complexity=[4,40,20,2], load_networks=1, network_count=1, mutation_rate=1)
 nn2 = Neural_net_collection(complexity=[4,20,20,10,26,2], load_networks=1, network_count=1, mutation_rate=1)
 
-play_self(nn, 50, 20)
-print("TESTING")
-play_self(nn, 20, 20, False)
-print("First is done practicing")
-play_self(nn2, 20, 20, False)
-print("Second is done practicing")
 
-play_against(nn, nn2, 100, 20)
+def test_network(network):
+    data = []
+    for a in range(13):
+        data.append([])
+        for b in range(13):
+            suit_answers = 0
+            suit_answer_sum = 0
+            for suit_a in range(4):
+                for suit_b in range(4):
+                    if a == b and suit_a == suit_b:
+                        continue
+                    given_cards = [[a, suit_a], [b, suit_b]]
+                    input_cards = [number for hand in sorted(given_cards) for number in hand]
+                    answer = network.get_answer(network.networks[0][0], input_cards)
+                    suit_answers += 1
+                    suit_answer_sum += answer
+            data[-1].append(suit_answer_sum / suit_answers)
+
+    cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+    layout = go.Layout(
+        title = "Heatmap",
+        xaxis = dict(
+            type = "category",
+        ),
+        yaxis = dict(
+            type = "category",
+            scaleanchor = "x",
+        ),
+    )
+    trace = go.Heatmap(z=data, x=cards, y=cards)
+    fig = go.Figure(data=[trace], layout=layout)
+    py.plot(fig, filename='basic-heatmap')
+
+
+test_network(nn)
