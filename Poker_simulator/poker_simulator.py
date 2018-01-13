@@ -55,27 +55,27 @@ def play_game(network_1, network_2, blinds, net_1, net_2=None):
         player_2_hand = player_2_hole_cards + board
         
         flattened_player_1_hand = [number for hand in sorted(player_1_hole_cards) for number in hand]
-        player_1_answer = net_1.get_answer(network_1[0], flattened_player_1_hand)
+        player_1_answer = net_1.get_answer(network_1["weights"], flattened_player_1_hand)
         if player_1_answer != 0:
             flattened_player_2_hand = [number for hand in sorted(player_2_hole_cards) for number in hand]
-            player_2_answer = net_2.get_answer(network_2[0], flattened_player_2_hand)
+            player_2_answer = net_2.get_answer(network_2["weights"], flattened_player_2_hand)
             if player_2_answer != 0:
                 player_1_result = evaluate_hand(player_1_hand)
                 player_2_result = evaluate_hand(player_2_hand)
                 if player_1_result > player_2_result:
-                    network_1[1] += blinds
-                    network_2[1] -= blinds
+                    network_1["performance"] += blinds
+                    network_2["performance"] -= blinds
                 else:
-                    network_1[1] -= blinds
-                    network_2[1] += blinds
+                    network_1["performance"] -= blinds
+                    network_2["performance"] += blinds
         
             else:
-                network_1[1] += 1
-                network_2[1] -= 1
+                network_1["performance"] += 1
+                network_2["performance"] -= 1
 
         else:
-            network_1[1] -= 0.5
-            network_2[1] += 0.5
+            network_1["performance"] -= 0.5
+            network_2["performance"] += 0.5
                 
 
 def evaluate_hand(hand):

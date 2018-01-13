@@ -29,7 +29,7 @@ class Neural_net_collection:
                 trans = self.load_transformation()
                 load_amount -= 1
             performance = 0
-            networks.append([trans, performance, self.network_count])
+            networks.append({"weights": trans, "performance": performance, "id": self.network_count})
             self.network_count += 1
 
         return networks
@@ -46,7 +46,7 @@ class Neural_net_collection:
         filename = input("Where do you want to save it? ")
         # Structure the output format
         output = ""
-        for row in self.networks[0][0]:
+        for row in self.networks[0]["weights"]:
             output += ','.join(str(weight) for weight in row)
             output += "\n"
         
@@ -110,23 +110,23 @@ class Neural_net_collection:
 
     def update_networks(self, iteration):
         # Kill the worst networks
-        self.networks = sorted(self.networks, key=lambda x: x[1], reverse=True)
+        self.networks = sorted(self.networks, key=lambda x: x["performance"], reverse=True)
         self.print_networks(iteration)
         self.networks = self.networks[:(len(self.networks) // 2)]
 
         # Breed new networks
         for g in range(len(self.networks)):
-            new_network = self.combine_transformations(random.choice(self.networks)[0], random.choice(self.networks)[0])
-            self.networks.append([new_network, 0, self.network_count])
+            new_network = self.combine_transformations(random.choice(self.networks)["weights"], random.choice(self.networks)["weights"])
+            self.networks.append({"weights": new_network, "performance": 0, "id": self.network_count})
             self.network_count += 1
 
     def print_networks(self, iteration):
-        print("iteration " + str(iteration) + ": " + ', '.join(str(network[2]) + ": " + str(network[1]) for network in self.networks))
+        print("iteration " + str(iteration) + ": " + ', '.join(str(network["id"]) + ": " + str(network["performance"]) for network in self.networks))
 
     def reset_performance(self):
         # Set everyones performance to 0
         for network in self.networks:
-            network[1] = 0
+            network["performance"] = 0
 
     def combine_transformations(self, trans_one, trans_two):
         new_trans = []
@@ -151,7 +151,7 @@ class Neural_net_collection:
                             continue
                         given_cards = [[a, suit_a], [b, suit_b]]
                         input_cards = [number for hand in sorted(given_cards) for number in hand]
-                        answer = self.get_answer(self.networks[0][0], input_cards)
+                        answer = self.get_answer(self.networks[0]["weights"], input_cards)
                         suit_answers += 1
                         suit_answer_sum += answer
                 answer = suit_answer_sum / suit_answers
@@ -159,7 +159,7 @@ class Neural_net_collection:
 
         cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
         layout = go.Layout(
-            title = "Heatmap " + str(self.networks[0][2]),
+            title = "Heatmap " + str(self.networks[0]["id"]),
             xaxis = dict(
                 type = "category",
             ),
