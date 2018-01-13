@@ -2,6 +2,9 @@ import random
 import itertools
 
 def play_against(net_1, net_2, iterations, blinds, learning=True):
+    """
+    Play two different NeuralNetCollections against eachother.
+    """
     for i in range(iterations):
         for network_from_1 in net_1.networks:
             for network_from_2 in net_2.networks:
@@ -21,6 +24,10 @@ def play_against(net_1, net_2, iterations, blinds, learning=True):
         net_2.save_best_network()
 
 def play_self(network_collection, iterations, blinds, learning=True, print_debug=False):
+    """
+    Let the different networks inside a NeuralNetCollection play agiant eachother. For every
+    iteration, each network will play against every other network inside its NeuralNetCollection.
+    """
     for i in range(iterations):
         for first_network, second_network in itertools.combinations(network_collection.networks, 2):
             play_game(first_network, second_network, blinds, network_collection)
