@@ -4,6 +4,7 @@ import random
 import math
 import plotly.offline as py
 import plotly.graph_objs as go
+import numpy as np
 
 class NeuralNetCollection:
     def __init__(self, complexity, mutation_rate, network_count, load_networks=0):
@@ -83,36 +84,22 @@ class NeuralNetCollection:
         assert(len(param) == self.complexity[0])
 
         # The first row of nodes are input data
-        node_row_former = param
+        node_row_former = np.array(param)
 
         # Calculate the value of every node, in every row, from the beginning to the end.
         for a in range(1, len(self.complexity)):
-            weights_row = iter(weights[a-1])
-            node_row_lower = []
-            for _ in range(self.complexity[a]):
-                # Each node has a value of: all weights, multiplied with the value of their respective former node, summed together.
-                node_row_lower.append(
-                    sum(
-                        map(
-                            lambda node, weight: node * weight, 
-                            iter(node_row_former), 
-                            weights_row
-                        )
-                    )
-                )
-
-                # Normalize the value
-                node_row_lower[-1] = math.tanh(node_row_lower[-1])
+            # Split weights up for each node in the previous layer
+            new_weights = np.array(weights[a-1]).reshape((self.complexity[a], len(node_row_former)))
             
-            # node_row_lower is now filled with values (nodes) which can be used to calculate the next layer of nodes.
-            node_row_former = node_row_lower
+            node_row_former = np.tanh(np.multiply(new_weights, node_row_former).sum(axis=1))
 
 
         # Choose output by looking at which of the two output
         # nodes has the highest value
+        node_row_former = list(node_row_former)
         largest_value = 0
         output = 0
-        for i, node_value in enumerate(node_row_lower):
+        for i, node_value in enumerate(node_row_former):
             if largest_value < node_value:
                 largest_value = node_value
                 output = i
@@ -207,6 +194,6 @@ random.seed(11)
 # Create the network.
 nn = NeuralNetCollection(complexity=[4,40,20,10,2], load_networks=0, network_count=4, mutation_rate=1)
 
-play_self(nn, iterations=40, blinds=20, print_debug=True)
+play_self(nn, iterations=1, blinds=20, print_debug=False)
 
-nn.save_best_network()
+# nn.save_best_network()
