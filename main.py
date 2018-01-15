@@ -1,6 +1,8 @@
 from Poker_simulator.poker_simulator import play_against, play_self
 
 import random
+from datetime import datetime
+import os
 import math
 import plotly.offline as py
 import plotly.graph_objs as go
@@ -19,6 +21,7 @@ class NeuralNetCollection:
         # over its lifetime. Its value is used as ids for new networks.
         self.network_count = 0
 
+        self.start_time = str(datetime.now())
         self.mutation_rate = mutation_rate
         self.complexity = complexity
         self.networks = self.generate_networks(load_amount=load_networks, total_amount=network_count)
@@ -186,7 +189,11 @@ class NeuralNetCollection:
         )
         trace = go.Heatmap(z=data, x=axis_labels, y=axis_labels)
         fig = go.Figure(data=[trace], layout=layout)
-        py.plot(fig, filename='basic-heatmap.html')
+
+        if not os.path.isdir(self.start_time):
+            os.makedirs(self.start_time)
+        dest = self.start_time + "/" + str(self.networks[0]["id"]) + '.html'
+        py.plot(fig, filename=dest)
 
 # Specify the seed to use. Useful for debugging.
 random.seed(11)
