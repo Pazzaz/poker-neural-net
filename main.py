@@ -21,7 +21,7 @@ class NeuralNetCollection:
         # over its lifetime. Its value is used as ids for new networks.
         self.network_count = 0
 
-        self.start_time = str(datetime.now())
+        self.start_time = str(datetime.now().date())
         self.mutation_rate = mutation_rate
         self.complexity = complexity
         self.networks = self.generate_networks(load_amount=load_networks, total_amount=network_count)
