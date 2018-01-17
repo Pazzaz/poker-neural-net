@@ -187,7 +187,7 @@ class NeuralNetCollection:
                 scaleanchor = "x", # Make the heatmap square
             ),
         )
-        trace = go.Heatmap(z=data, x=axis_labels, y=axis_labels)
+        trace = go.Heatmap(z=data, x=axis_labels, y=axis_labels, zmin=0.0, zmax=1.0)
         fig = go.Figure(data=[trace], layout=layout)
 
         if not os.path.isdir(self.start_time):
