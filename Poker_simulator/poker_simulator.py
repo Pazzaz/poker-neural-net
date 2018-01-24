@@ -9,6 +9,8 @@ def play_against(net_1, net_2, iterations, blinds, learning=True):
         for network_from_1 in net_1.networks:
             for network_from_2 in net_2.networks:
                 play_game(network_from_1, network_from_2, blinds, net_1, net_2)
+                # Switch places
+                play_game(network_from_2, network_from_1, blinds, net_1, net_2)
         if learning:
             net_1.update_networks(i)
             net_2.update_networks(i)
@@ -31,6 +33,8 @@ def play_self(network_collection, iterations, blinds, learning=True, print_debug
     for i in range(iterations):
         for first_network, second_network in itertools.combinations(network_collection.networks, 2):
             play_game(first_network, second_network, blinds, network_collection)
+            # Switch places
+            play_game(second_network, first_network, blinds, network_collection)
         if learning:
             network_collection.update_networks(i)
         else:
