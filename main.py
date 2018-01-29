@@ -99,14 +99,8 @@ class NeuralNetCollection:
 
         # Choose output by looking at which of the two output
         # nodes has the highest value
-        node_row_former = list(node_row_former)
-        largest_value = 0
-        output = 0
-        for i, node_value in enumerate(node_row_former):
-            if largest_value < node_value:
-                largest_value = node_value
-                output = i
-        return output
+        maxn = np.argmax(node_row_former)
+        return maxn
 
     def update_networks(self, iteration):
         # Sort the networks by performance and print information about them.
