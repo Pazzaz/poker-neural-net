@@ -84,6 +84,8 @@ class NeuralNetCollection:
         return weights
 
     def get_answer(self, weights, param):
+        # If there are 52 nodes in the first layer we want a binary input: each node is a card
+        # where 0 means we don't have the card and 1 means we do
         if self.complexity[0] == 52:
             all_cards = [0 for _ in range(52)]
             all_cards[param[0] + param[1] * 13] = 1
