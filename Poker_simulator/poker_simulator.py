@@ -76,7 +76,7 @@ def play_game(network_1, network_2, blinds, net_1, net_2=None):
                 if player_1_result > player_2_result:
                     network_1["performance"] += blinds
                     network_2["performance"] -= blinds
-                else:
+                elif player_1_result < player_2_result:
                     network_1["performance"] -= blinds
                     network_2["performance"] += blinds
         
