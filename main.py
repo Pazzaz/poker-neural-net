@@ -193,7 +193,7 @@ class NeuralNetCollection:
         if not os.path.isdir(self.start_time):
             os.makedirs(self.start_time)
         dest = self.start_time + "/" + str(self.networks[0]["id"]) + '.html'
-        py.plot(fig, filename=dest)
+        py.plot(fig, filename=dest, auto_open=False)
 
 # Specify the seed to use. Useful for debugging.
 random.seed(11)
