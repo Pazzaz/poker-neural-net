@@ -84,7 +84,11 @@ class NeuralNetCollection:
         return weights
 
     def get_answer(self, weights, param):
-        assert(len(param) == self.complexity[0])
+        if self.complexity[0] == 52:
+            all_cards = [0 for _ in range(52)]
+            all_cards[param[0] + param[1] * 13] = 1
+            all_cards[param[2] + param[3] * 13] = 1
+            param = all_cards
 
         # The first row of nodes are input data
         node_row_former = np.array(param)
