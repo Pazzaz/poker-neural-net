@@ -76,10 +76,9 @@ class NeuralNetCollection:
     def random_weights(self):
         weights = []
         for i in range(1, len(self.complexity)):
-            weights.append([])
             connections = self.complexity[i] * self.complexity[i-1]
-            for _ in range(connections):
-                weights[i-1].append(random.uniform(-1.0, 1.0))
+            iterator = (random.uniform(-1.0, 1.0) for _ in range(connections))
+            weights.append(np.fromiter(iterator, float).reshape((self.complexity[i], self.complexity[i-1])))
 
         return weights
 
@@ -98,7 +97,7 @@ class NeuralNetCollection:
         # Calculate the value of every node, in every row, from the beginning to the end.
         for a in range(1, len(self.complexity)):
             # Split weights up for each node in the previous layer
-            new_weights = np.array(weights[a-1]).reshape((self.complexity[a], len(node_row_former)))
+            new_weights = weights[a-1]
             
             node_row_former = np.tanh(np.multiply(new_weights, node_row_former).sum(axis=1))
 
@@ -141,12 +140,13 @@ class NeuralNetCollection:
         new_weight = []
         for a in range(len(weight_one)):
             new_weight.append([])
-            for one, two in zip(weight_one[a], weight_two[a]):
+            for one, two in zip(list(weight_one[a].flatten()), list(weight_two[a].flatten())):
                 # Modify the weights a little by the NeuralNetCollections mutation_rate
                 mutation = random.uniform(-self.mutation_rate, self.mutation_rate)
 
                 # Randomly choose connections between one and two and then add the mutation
                 new_weight[a].append(random.choice([one, two]) + mutation)
+            new_weight[a] = np.array(new_weight[a]).reshape((self.complexity[a+1], self.complexity[a]))
 
         return new_weight
 
