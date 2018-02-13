@@ -48,7 +48,7 @@ class NeuralNetCollection:
         # Structure the output format
         output = ""
         for row in self.networks[0]["weights"]:
-            output += ','.join(str(weight) for weight in row)
+            output += ','.join(str(weight) for weight in list(row.flatten()))
             output += "\n"
         
         # Write the output
@@ -65,11 +65,12 @@ class NeuralNetCollection:
                 weights[-1].append(float(weight))
 
         # Validate
-        for index, (nodes_1, nodes_2) in enumerate(zip(self.complexity[1:], self.complexity[:1])):
+        for index, (nodes_1, nodes_2) in enumerate(zip(self.complexity[1:], self.complexity[:-1])):
             weight_count = nodes_1 * nodes_2
             if len(weights[index]) != weight_count:
                 print("Loaded network doesn't match 'complexity'")
                 exit()
+            weights[index] = np.array(weights[index]).reshape((nodes_1, nodes_2))
 
         return weights
 
