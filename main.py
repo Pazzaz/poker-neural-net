@@ -83,22 +83,6 @@ class NeuralNetCollection:
 
         return weights
 
-    def get_answer(self, weights, param):
-        # The first row of nodes are input data
-        node_row_former = param
-
-        # Calculate the value of every node, in every row, from the beginning to the end.
-        for a in range(1, len(self.complexity)):
-            # Split weights up for each node in the previous layer
-            new_weights = weights[a-1]
-            
-            node_row_former = np.tanh(np.multiply(new_weights, node_row_former).sum(axis=1))
-
-
-        # Choose output by looking at which of the two output
-        # nodes has the highest value
-        maxn = np.argmax(node_row_former)
-        return maxn
 
     def update_networks(self, iteration):
         # Sort the networks by performance and print information about them.
@@ -189,6 +173,22 @@ class NeuralNetCollection:
             os.makedirs(self.start_time)
         dest = self.start_time + "/" + str(self.networks[0]["id"]) + '.html'
         py.plot(fig, filename=dest, auto_open=False)
+
+def get_answer(weights, param):
+    # The first row of nodes are input data
+    node_row_former = param
+
+    # Calculate the value of every node, in every row, from the beginning to the end.
+    for a in range(1, len(self.complexity)):
+        # Split weights up for each node in the previous layer
+        new_weights = weights[a-1]
+        
+        node_row_former = np.tanh(np.multiply(new_weights, node_row_former).sum(axis=1))
+
+
+    # Choose output by looking at which of the two output
+    # nodes has the highest value
+    return np.argmax(node_row_former)
 
 # Specify the seed to use. Useful for debugging.
 random.seed(11)

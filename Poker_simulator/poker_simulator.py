@@ -1,7 +1,9 @@
-import itertools
+from itertools import combinations
 
 import eval7
 import numpy as np
+
+from .. import get_answer
 
 
 def play_against(net_1, net_2, iterations, blinds, learning=True):
@@ -11,9 +13,9 @@ def play_against(net_1, net_2, iterations, blinds, learning=True):
     for i in range(iterations):
         for network_from_1 in net_1.networks:
             for network_from_2 in net_2.networks:
-                play_game(network_from_1, network_from_2, blinds, net_1, net_2)
+                play_game(network_from_1, network_from_2, blinds)
                 # Switch places
-                play_game(network_from_2, network_from_1, blinds, net_1, net_2)
+                play_game(network_from_2, network_from_1, blinds)
         if learning:
             net_1.update_networks(i)
             net_2.update_networks(i)
@@ -36,11 +38,10 @@ def play_self(network_collection, iterations, blinds, learning=True, print_debug
     network inside its NeuralNetCollection.
     """
     for i in range(iterations):
-        for first_network, second_network in itertools.combinations(
-                network_collection.networks, 2):
-            play_game(first_network, second_network, blinds, network_collection)
+        for first_network, second_network in combinations(network_collection.networks, 2):
+            play_game(first_network, second_network, blinds)
             # Switch places
-            play_game(second_network, first_network, blinds, network_collection)
+            play_game(second_network, first_network, blinds)
         if learning:
             network_collection.update_networks(i)
         else:
@@ -51,9 +52,7 @@ def play_self(network_collection, iterations, blinds, learning=True, print_debug
             network_collection.test_best_network()
         
 
-def play_game(network_1, network_2, blinds, net_1, net_2=None):
-    if net_2 is None:
-        net_2 = net_1
+def play_game(network_1, network_2, blinds):
     for _ in range(30000):
         deck = eval7.Deck()
         cards = deck.sample(9)
@@ -68,7 +67,7 @@ def play_game(network_1, network_2, blinds, net_1, net_2=None):
         card_id_2 = p1_hole_cards[1].rank + p1_hole_cards[1].suit * 13
         p1_input[card_id_1] = 1
         p1_input[card_id_2] = 1
-        p1_answer = net_1.get_answer(network_1["weights"], p1_input)
+        p1_answer = get_answer(network_1["weights"], p1_input)
         
         if p1_answer != 0:
 
@@ -77,7 +76,7 @@ def play_game(network_1, network_2, blinds, net_1, net_2=None):
             card_id_2 = p2_hole_cards[1].rank + p2_hole_cards[1].suit * 13
             p2_input[card_id_1] = 1
             p2_input[card_id_2] = 1
-            p2_answer = net_2.get_answer(network_2["weights"], p2_input)
+            p2_answer = get_answer(network_2["weights"], p2_input)
         
             if p2_answer != 0:
                 p1_eval = eval7.evaluate(p1_cards)
