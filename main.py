@@ -84,16 +84,8 @@ class NeuralNetCollection:
         return weights
 
     def get_answer(self, weights, param):
-        # If there are 52 nodes in the first layer we want a binary input: each node is a card
-        # where 0 means we don't have the card and 1 means we do
-        if self.complexity[0] == 52:
-            all_cards = [0 for _ in range(52)]
-            all_cards[param[0] + param[1] * 13] = 1
-            all_cards[param[2] + param[3] * 13] = 1
-            param = all_cards
-
         # The first row of nodes are input data
-        node_row_former = np.array(param)
+        node_row_former = param
 
         # Calculate the value of every node, in every row, from the beginning to the end.
         for a in range(1, len(self.complexity)):
@@ -170,7 +162,9 @@ class NeuralNetCollection:
                         if a == b and suit_a == suit_b:
                             continue
                         given_cards = [[a, suit_a], [b, suit_b]]
-                        input_cards = [number for hand in sorted(given_cards) for number in hand]
+                        input_cards = np.zeros(52)
+                        input_cards[a + suit_a * 13] = 1
+                        input_cards[b + suit_b * 13] = 1
                         answer = self.get_answer(self.networks[0]["weights"], input_cards)
                         suit_answers += 1
                         suit_answer_sum += answer
