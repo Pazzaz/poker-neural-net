@@ -8,4 +8,4 @@ random.seed(11)
 # Create the network.
 nn = NeuralNetCollection(complexity=[52,40,2], load_networks=0, network_count=12, mutation_rate=0.5)
 
-play_self(nn, iterations=5, blinds=20, print_debug=True)
+play_self(nn, iterations=120, blinds=20, hands=1000, print_debug=True)

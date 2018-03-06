@@ -7,16 +7,16 @@ from neural import get_answer
 
 deck = eval7.Deck()
 
-def play_against(net_1, net_2, iterations, blinds, learning=True):
+def play_against(net_1, net_2, iterations, blinds, hands, learning=True):
     """
     Play two different NeuralNetCollections against eachother.
     """
     for i in range(iterations):
         for network_from_1 in net_1.networks:
             for network_from_2 in net_2.networks:
-                play_game(network_from_1, network_from_2, blinds)
+                play_game(network_from_1, network_from_2, blinds, hands)
                 # Switch places
-                play_game(network_from_2, network_from_1, blinds)
+                play_game(network_from_2, network_from_1, blinds, hands)
         if learning:
             net_1.update_networks(i)
             net_2.update_networks(i)
@@ -32,7 +32,7 @@ def play_against(net_1, net_2, iterations, blinds, learning=True):
         net_2.save_best_network()
 
 
-def play_self(network_collection, iterations, blinds, learning=True, print_debug=False):
+def play_self(network_collection, iterations, blinds, hands, learning=True, print_debug=False):
     """
     Let the different networks inside a NeuralNetCollection play against
     eachother. For every iteration, each network will play against every other
@@ -40,9 +40,9 @@ def play_self(network_collection, iterations, blinds, learning=True, print_debug
     """
     for i in range(iterations):
         for first_network, second_network in combinations(network_collection.networks, 2):
-            play_game(first_network, second_network, blinds)
+            play_game(first_network, second_network, blinds, hands)
             # Switch places
-            play_game(second_network, first_network, blinds)
+            play_game(second_network, first_network, blinds, hands)
         if learning:
             network_collection.update_networks(i)
         else:
@@ -53,8 +53,8 @@ def play_self(network_collection, iterations, blinds, learning=True, print_debug
             network_collection.test_best_network()
         
 
-def play_game(network_1, network_2, blinds):
-    for _ in range(1000):
+def play_game(network_1, network_2, blinds, hands):
+    for _ in range(hands):
 
         # Draw and distribute cards
         cards = deck.sample(9)
