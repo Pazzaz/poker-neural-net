@@ -20,7 +20,7 @@ class NeuralNetCollection:
         # over its lifetime. Its value is used as ids for new networks.
         self.network_count = 0
 
-        self.start_time = str(datetime.now().date())
+        self.print_path = "output/" + str(datetime.now().date())
         self.mutation_rate = mutation_rate
         self.complexity = complexity
         self.networks = self.generate_networks(load_amount=load_networks, total_amount=network_count)
@@ -165,9 +165,12 @@ class NeuralNetCollection:
         trace = go.Heatmap(z=data, x=axis_labels, y=axis_labels, zmin=0.0, zmax=1.0)
         fig = go.Figure(data=[trace], layout=layout)
 
-        if not os.path.isdir(self.start_time):
-            os.makedirs(self.start_time)
-        dest = self.start_time + "/" + str(self.networks[0]["id"]) + '.html'
+        if not os.path.isdir("output"):
+            os.makedirs(self.print_path)
+
+        if not os.path.isdir(self.print_path):
+            os.makedirs(self.print_path)
+        dest = self.print_path + "/" + str(self.networks[0]["id"]) + '.html'
         py.plot(fig, filename=dest, auto_open=False)
 
 def get_answer(weights, param):
