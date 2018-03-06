@@ -112,19 +112,23 @@ class NeuralNetCollection:
     def mix_weights(self, weights_one, weights_two):
         new_weights = []
         for (weight_row_1, weight_row_2) in zip(weights_one, weights_two):
+            # Use an array filled with 0s and 1s to decide which array to take
+            # some value from, for a specificindex. 0 corresponds to a value from
+            # weight_row_1 and 1 to a value from weight_row_2.
             choise_mask = np.random.randint(low=0, high=2, size=weight_row_1.shape)
-            mutation = np.random.uniform(low=-self.mutation_rate, high=self.mutation_rate, size=weight_row_1.shape)
             mixed = np.choose(choise_mask, [weight_row_1, weight_row_2])
+
+            # Add some mutation too
+            mutation = np.random.uniform(low=-self.mutation_rate, high=self.mutation_rate, size=weight_row_1.shape)
             new_weights.append(mixed + mutation)
         return new_weights
 
     def test_best_network(self):
         """
-        Use plotly to generate a heatmap which will be saved and then opened in your browser.
-        The heatmap shows how the best network reacts when given different card combinations
-        where a value of 0 is that it folds when given that combination, regardless of the suits
-        of the cards and a value of 1 is that it always bets when given that combination. Values
-        inbetween mean its answer depends on the suit.
+        Use plotly to generate a heatmap. The heatmap shows how the best network reacts when given
+        different card combinations where a value of 0 is that it folds when given that combination,
+        regardless of the suits of the cards and a value of 1 is that it always bets when given that
+        combination. Values inbetween mean its answer depends on the suit.
         """
         data = []
         for a in range(13):
@@ -150,7 +154,7 @@ class NeuralNetCollection:
         layout = go.Layout(
             title = "Heatmap " + str(self.networks[0]["id"]),
             xaxis = dict(
-                type = "category", # Prevents the axis labels to be treated as numbers
+                type = "category", # Prevent the axis labels from being treated as numbers
             ),
             yaxis = dict(
                 type = "category",

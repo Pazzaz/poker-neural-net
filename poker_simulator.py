@@ -55,6 +55,8 @@ def play_self(network_collection, iterations, blinds, learning=True, print_debug
 
 def play_game(network_1, network_2, blinds):
     for _ in range(1000):
+
+        # Draw and distribute cards
         cards = deck.sample(9)
         p1_hole_cards = cards[0:2]
         p2_hole_cards = cards[2:4]
@@ -62,6 +64,8 @@ def play_game(network_1, network_2, blinds):
         p1_cards = p1_hole_cards + board
         p2_cards = p2_hole_cards + board
 
+        # Create the input to p1: a 52 value array filled with zeroes and two indices
+        # where the value is 1. These two indices corresponds to p1_hole_cards.
         p1_input = np.zeros(52)
         card_id_1 = p1_hole_cards[0].rank + p1_hole_cards[0].suit * 13
         card_id_2 = p1_hole_cards[1].rank + p1_hole_cards[1].suit * 13
@@ -89,9 +93,11 @@ def play_game(network_1, network_2, blinds):
                     network_2["performance"] += blinds
         
             else:
+                # Player 2 folded
                 network_1["performance"] += 1
                 network_2["performance"] -= 1
 
         else:
+            # Player 1 folded
             network_1["performance"] -= 0.5
             network_2["performance"] += 0.5
